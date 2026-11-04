@@ -1,0 +1,104 @@
+@import 'tailwindcss';
+
+@font-face {
+  font-family: 'Arial:Regular';
+  src: url('/fonts/Arial-Regular.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 400;
+}
+
+@font-face {
+  font-family: 'Arial:Bold';
+  src: url('/fonts/Arial-Bold.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 700;
+}
+
+/* Design tokens. Every value here becomes a Tailwind utility (e.g. text-ink, bg-mist, shadow-card, max-lg:). */
+@theme {
+  --font-sans: 'Arial:Regular', Arial, sans-serif;
+  --font-heading: 'Arial:Bold', Arial, sans-serif;
+
+  --color-ink: #4f4f4f;
+  --color-ink-deep: #2f2f2f;
+  --color-ink-bar: #363636;
+  --color-muted: #8a8a8a;
+  --color-faint: #a8a8a8;
+  --color-ghost: #c5c5c5;
+  --color-line: #e9e9e9;
+  --color-chip: #e2e2e2;
+  --color-soft: #f4f4f4;
+  --color-pill: #f5f5f5;
+  --color-mist: #f8f8f8;
+  --color-accent: #ef6c3f;
+
+  --tracking-eyebrow: 4.08px;
+  --leading-body: 1.469;
+  --leading-display: 1.69;
+
+  --shadow-card: 0 0 20px rgba(108, 108, 108, 0.15);
+  --shadow-ring: 0 0 7.5px rgba(108, 108, 108, 0.25);
+  --shadow-nav: 1px 2px 9px rgba(108, 108, 108, 0.15);
+  --shadow-hero: 0 4px 25px rgba(44, 44, 44, 0.15);
+  --shadow-modal: 0 25px 70px rgba(0, 0, 0, 0.25);
+
+  --breakpoint-xs: 35rem; /* 560px */
+  --breakpoint-sm: 43.75rem; /* 700px */
+  --breakpoint-md: 51.25rem; /* 820px */
+  --breakpoint-lg: 56.25rem; /* 900px */
+
+  --animate-panel-in: panel-in 280ms ease both;
+
+  @keyframes panel-in {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+  }
+}
+
+/* Centered 1280px site column used by every section. */
+@utility wrap {
+  width: min(1280px, calc(100% - 40px));
+  margin-inline: auto;
+}
+
+@utility scrollbar-none {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    min-width: 320px;
+    background: #fff;
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-synthesis: none;
+  }
+
+  :where(button, input, textarea):focus-visible {
+    outline: 2px solid var(--color-ink);
+    outline-offset: 3px;
+  }
+
+  button:not(:disabled) {
+    cursor: pointer;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      scroll-behavior: auto !important;
+      animation: none !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}

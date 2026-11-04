@@ -1,0 +1,11 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="boxicons:chart-bar-columns" clip-path="url(#clip0_0_17)">
+<path id="Vector" d="M1.66634 0.833344H0.833008V8.75001C0.833008 8.97918 1.02051 9.16668 1.24967 9.16668H9.16634V8.33334H1.66634V0.833344Z" fill="#4F4F4F"/>
+<path id="Vector_2" d="M7.08366 4.99999H7.91699V7.49999H7.08366V4.99999ZM5.00033 1.66666H5.83366V7.49999H5.00033V1.66666ZM2.91699 3.74999H3.75033V7.49999H2.91699V3.74999Z" fill="#4F4F4F"/>
+</g>
+<defs>
+<clipPath id="clip0_0_17">
+<rect width="10" height="10" fill="white"/>
+</clipPath>
+</defs>
+</svg>
