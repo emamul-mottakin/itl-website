@@ -28,7 +28,7 @@ jobs:
       - run: npm ci
       - run: npm run build
         env:
-          FIGMA_PUBLIC_URL: /itl-website
+          BASE_URL: /itl-website
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
