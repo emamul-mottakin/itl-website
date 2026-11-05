@@ -155,7 +155,7 @@ function renderDepartmentPanel(index) {
         </div>
         <div class="rounded-2xl bg-white p-2 shadow-ring max-sm:-order-1">
           <div class="relative aspect-[4/5] overflow-hidden rounded-[10px] max-sm:aspect-video">
-            <img class="absolute inset-0 size-full object-cover" src="${A}/12850.png" alt="" />
+            <img class="absolute inset-0 size-full object-cover" src="${A}/12850.webp" alt="" />
           </div>
         </div>
       </div>

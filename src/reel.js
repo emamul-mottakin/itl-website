@@ -9,7 +9,7 @@ function renderList(photos, folder, href, { duplicate }) {
       ({ src, alt }) => `
         <li class="reel-frame">
           <a class="reel-photo" href="${href}" target="_blank" rel="noopener noreferrer"${duplicate ? ' tabindex="-1"' : ''}>
-            <img src="${folder}/${src}" alt="${duplicate ? '' : escapeHtml(alt)}" decoding="async" draggable="false" />
+            <img src="${folder}/${src}" alt="${duplicate ? '' : escapeHtml(alt)}" draggable="false" />
           </a>
         </li>`,
     )
