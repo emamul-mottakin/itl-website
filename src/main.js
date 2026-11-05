@@ -1,13 +1,13 @@
 import './index.css'
 import { departmentDetails } from './data/departments.js'
-import { eventCategories } from './data/events.js'
 import { initMarquee } from './marquee.js'
+import { initReel } from './reel.js'
+import { lifeRows, lifeSocialUrl } from './data/life.js'
 import { brands } from './data/brands.js'
 import { certificates } from './data/certificates.js'
 
 const A = `${import.meta.env.BASE_URL}assets`
 const IMPACT_ICONS = ['84ecf.svg', '1c7db.svg', 'bf0b0.svg', 'dd56e.svg']
-const EVENTS_PAGE_SIZE = 6
 
 const $ = (selector, root = document) => root.querySelector(selector)
 const $$ = (selector, root = document) => [...root.querySelectorAll(selector)]
@@ -251,178 +251,6 @@ deptTabList.addEventListener('keydown', (event) => {
 
 selectDepartment(0, { reveal: false })
 
-/* ---------------------------------------------------------------------------
- * Events modal: paginated card list -> detail view with photo gallery
- * ------------------------------------------------------------------------- */
-const eventsBackdrop = $('#events-modal')
-const eventsTitle = $('#events-title')
-const eventsBody = $('#events-body')
-const events = { category: null, page: 1, activeIndex: null, photoIndex: 0 }
-
-const eventsModal = createModal(eventsBackdrop, {
-  // Escape steps back from the detail view before closing the modal.
-  onEscape: () => {
-    if (events.activeIndex === null) return false
-    showEventList()
-    return true
-  },
-  onClose: () => {
-    eventsBody.innerHTML = ''
-  },
-})
-
-// Page numbers with ellipsis gaps, e.g. 1 2 3 … 9 or 1 … 4 5 6 … 9
-function pageItems(current, count) {
-  if (count <= 5) return Array.from({ length: count }, (_, i) => i + 1)
-  const set = new Set([1, count, current - 1, current, current + 1])
-  if (current <= 2) [2, 3].forEach((n) => set.add(n))
-  const nums = [...set].filter((n) => n >= 1 && n <= count).sort((a, b) => a - b)
-  const out = []
-  nums.forEach((n, i) => {
-    if (i > 0 && n - nums[i - 1] > 1) out.push('gap')
-    out.push(n)
-  })
-  return out
-}
-
-const EVENT_PAD = 'px-[clamp(16px,5vw,50px)] py-[60px] max-sm:py-6'
-const PAGER_DOT = 'inline-flex size-[42px] max-sm:size-9 max-sm:text-[13px] items-center justify-center rounded-full border border-[#ededed] bg-soft'
-const PAGER_PILL =
-  'h-10 rounded-[40px] border border-[#ededed] bg-ink px-6 text-white max-sm:px-4 max-sm:text-[13px] disabled:border-line disabled:bg-white disabled:text-ghost'
-
-function showEventList() {
-  const { category, page } = events
-  events.activeIndex = null
-  const pageCount = Math.ceil(category.events.length / EVENTS_PAGE_SIZE)
-  const start = (page - 1) * EVENTS_PAGE_SIZE
-
-  const cards = category.events
-    .slice(start, start + EVENTS_PAGE_SIZE)
-    .map(
-      (item, i) => `
-        <button type="button" data-event="${start + i}" class="group flex flex-col gap-[18px] rounded-[10px] bg-white px-4 py-[18px] text-left max-sm:gap-3 max-sm:p-3 shadow-card transition duration-200 hover:-translate-y-[3px] hover:shadow-[0_6px_26px_rgba(108,108,108,0.28)] focus-visible:-translate-y-[3px]">
-          <span class="block aspect-square overflow-hidden rounded-[10px] bg-chip"><img class="size-full object-cover transition-transform duration-400 group-hover:scale-[1.04]" src="${A}/${item.photos[0]}" alt="" /></span>
-          <span class="flex flex-col gap-0.5">
-            <strong class="font-heading text-base leading-[1.4] capitalize max-sm:text-sm">${escapeHtml(item.title)}</strong>
-            <time class="font-heading text-xs text-faint">${escapeHtml(item.date)}</time>
-          </span>
-        </button>`,
-    )
-    .join('')
-
-  const pages = pageItems(page, pageCount)
-    .map((n) =>
-      n === 'gap'
-        ? `<span class="${PAGER_DOT}" aria-hidden="true">...</span>`
-        : `<button type="button" data-page="${n}" class="${PAGER_DOT} aria-[current=page]:bg-ink aria-[current=page]:text-white" ${n === page ? 'aria-current="page"' : ''}>${n}</button>`,
-    )
-    .join('')
-
-  eventsBody.innerHTML = `
-    <div class="${EVENT_PAD}">
-      <div class="grid grid-cols-[repeat(auto-fill,minmax(min(240px,100%),1fr))] gap-[17px] max-sm:grid-cols-2 max-sm:gap-3">${cards}</div>
-      <nav class="mt-10 flex flex-wrap items-center justify-center gap-2 text-sm max-sm:mt-6" aria-label="Pagination">
-        <button type="button" data-page="${page - 1}" class="${PAGER_PILL}" ${page === 1 ? 'disabled' : ''}>Previous</button>
-        ${pages}
-        <button type="button" data-page="${page + 1}" class="${PAGER_PILL}" ${page === pageCount ? 'disabled' : ''}>Next</button>
-      </nav>
-    </div>`
-  eventsBody.scrollTo({ top: 0 })
-}
-
-function showEventDetail(index) {
-  const { category } = events
-  const item = category.events[index]
-  events.activeIndex = index
-  events.photoIndex = 0
-
-  const thumbs = item.photos
-    .map(
-      (photo, i) => `
-        <button type="button" role="tab" data-photo="${i}" aria-selected="${i === 0}" aria-label="Photo ${i + 1}" class="aspect-video shrink-0 grow-0 basis-[calc((100%_-_20px)/3)] snap-start overflow-hidden rounded-[10px] border-2 border-transparent bg-soft opacity-65 aria-selected:border-accent aria-selected:opacity-100">
-          <img class="size-full object-cover" src="${A}/${photo}" alt="" />
-        </button>`,
-    )
-    .join('')
-
-  const arrow = 'size-8 max-sm:size-10 flex-none rounded-full bg-ink text-base leading-none text-white'
-  const slider =
-    item.photos.length > 1
-      ? `<div class="mt-3.5 flex items-center gap-2">
-          <button type="button" class="${arrow}" data-slide="-1" aria-label="Scroll photos left">&lt;</button>
-          <div class="scrollbar-none flex min-w-0 flex-1 snap-x snap-mandatory gap-2.5 overflow-x-auto" role="tablist" aria-label="Event photos" data-thumbs>${thumbs}</div>
-          <button type="button" class="${arrow}" data-slide="1" aria-label="Scroll photos right">&gt;</button>
-        </div>`
-      : ''
-
-  const stepBtn = 'rounded-[40px] bg-ink px-[18px] py-2.5 text-sm text-white max-sm:flex-1 disabled:bg-soft disabled:text-ghost'
-  const steps =
-    category.events.length > 1
-      ? `<div class="mt-4 flex flex-wrap gap-2.5">
-          <button type="button" class="${stepBtn}" data-step="-1" ${index === 0 ? 'disabled' : ''}>Previous event</button>
-          <button type="button" class="${stepBtn}" data-step="1" ${index === category.events.length - 1 ? 'disabled' : ''}>Next event</button>
-        </div>`
-      : ''
-
-  eventsBody.innerHTML = `
-    <div class="${EVENT_PAD}">
-      <button type="button" class="mb-6 py-2 text-sm text-muted hover:text-ink" data-back>← Back to ${escapeHtml(category.name)}</button>
-      <div class="grid grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] items-start gap-10 max-md:grid-cols-1 max-md:gap-6">
-        <div>
-          <div class="aspect-[4/3] overflow-hidden rounded-[15px] bg-chip shadow-card">
-            <img class="size-full object-cover" src="${A}/${item.photos[0]}" alt="${escapeHtml(item.title)}" data-stage />
-          </div>
-          ${slider}
-        </div>
-        <div class="flex flex-col gap-3">
-          <time class="font-heading text-xs tracking-[2px] text-faint uppercase">${escapeHtml(item.date)}</time>
-          <h2 class="font-heading text-[26px] leading-[1.3] capitalize max-sm:text-[22px]">${escapeHtml(item.title)}</h2>
-          <p class="text-base leading-[1.7] text-muted max-sm:text-[15px]">${escapeHtml(item.details ?? item.summary)}</p>
-          ${steps}
-        </div>
-      </div>
-    </div>`
-  eventsBody.scrollTo({ top: 0 })
-}
-
-// Swap the main photo in place so the thumbnail strip keeps its scroll position.
-function showPhoto(index) {
-  const item = events.category.events[events.activeIndex]
-  events.photoIndex = index
-  $('[data-stage]', eventsBody).src = `${A}/${item.photos[index]}`
-  $$('[data-photo]', eventsBody).forEach((thumb, i) => thumb.setAttribute('aria-selected', String(i === index)))
-}
-
-// One delegated handler for everything rendered inside the events modal.
-eventsBody.addEventListener('click', (event) => {
-  const target = event.target.closest('button')
-  if (!target || target.disabled) return
-  const { event: eventIndex, page, photo, slide, step } = target.dataset
-
-  if (eventIndex !== undefined) showEventDetail(Number(eventIndex))
-  else if (page !== undefined) {
-    events.page = Number(page)
-    showEventList()
-  } else if (photo !== undefined) showPhoto(Number(photo))
-  else if (slide !== undefined) {
-    const strip = $('[data-thumbs]', eventsBody)
-    strip.scrollBy({ left: Number(slide) * strip.clientWidth * 0.9, behavior: 'smooth' })
-  } else if (step !== undefined) showEventDetail(events.activeIndex + Number(step))
-  else if ('back' in target.dataset) showEventList()
-})
-
-$('[data-close-events]').addEventListener('click', eventsModal.close)
-
-$$('[data-story]').forEach((button) =>
-  button.addEventListener('click', () => {
-    const category = eventCategories.find((item) => item.name === button.dataset.story)
-    if (!category) return
-    Object.assign(events, { category, page: 1, activeIndex: null, photoIndex: 0 })
-    eventsTitle.textContent = `Indesore Trading Ltd - ${category.name}`
-    showEventList()
-    eventsModal.open($('[data-close-events]'))
-  }),
-)
-
 initMarquee($('[data-brands]'), brands, `${A}/brands`)
 initMarquee($('[data-certificates]'), certificates, `${A}/certificates`)
+initReel($('[data-life-reel]'), lifeRows, `${A}/life-at-indesore`, lifeSocialUrl)

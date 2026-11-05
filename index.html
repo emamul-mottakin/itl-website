@@ -265,24 +265,7 @@
           <h2 class="font-heading text-[26px] leading-[normal] max-sm:text-[22px]">BEYOND BUSINESS,<br />BUILDING TOGETHER</h2>
           <p class="text-base leading-body text-muted max-sm:text-[15px]">A look into the events, experiences, and initiatives that bring our people together, inspire learning, and shape our workplace culture.</p>
         </div>
-        <div class="grid w-full max-w-[540px] grid-cols-2 justify-self-end gap-x-[38px] gap-y-5 max-lg:max-w-none max-lg:justify-self-auto max-lg:grid-cols-4 max-lg:gap-3.5 max-sm:grid-cols-2">
-          <button type="button" class="relative h-[160px] overflow-hidden max-sm:h-[120px] rounded-[10px] border-2 border-transparent shadow-card transition-transform duration-200 after:absolute after:inset-0 after:bg-[rgba(44,44,44,0.4)] even:translate-y-[30px] hover:scale-[1.03] hover:border-ink max-lg:even:translate-y-0" data-story="Team building events" aria-haspopup="dialog">
-            <img class="size-full object-cover" src="/assets/90c82.png" alt="" />
-            <span class="absolute inset-0 z-[1] grid place-items-center p-3 text-center font-heading text-lg leading-display text-white capitalize max-lg:text-base max-sm:text-[15px]">Team building events</span>
-          </button>
-          <button type="button" class="relative h-[160px] overflow-hidden max-sm:h-[120px] rounded-[10px] border-2 border-transparent shadow-card transition-transform duration-200 after:absolute after:inset-0 after:bg-[rgba(44,44,44,0.4)] even:translate-y-[30px] hover:scale-[1.03] hover:border-ink max-lg:even:translate-y-0" data-story="Awareness &amp; training sessions" aria-haspopup="dialog">
-            <img class="size-full object-cover" src="/assets/b2668.png" alt="" />
-            <span class="absolute inset-0 z-[1] grid place-items-center p-3 text-center font-heading text-lg leading-display text-white capitalize max-lg:text-base max-sm:text-[15px]">Awareness &amp; training sessions</span>
-          </button>
-          <button type="button" class="relative h-[160px] overflow-hidden max-sm:h-[120px] rounded-[10px] border-2 border-transparent shadow-card transition-transform duration-200 after:absolute after:inset-0 after:bg-[rgba(44,44,44,0.4)] even:translate-y-[30px] hover:scale-[1.03] hover:border-ink max-lg:even:translate-y-0" data-story="Feasible events" aria-haspopup="dialog">
-            <img class="size-full object-cover" src="/assets/d2273.png" alt="" />
-            <span class="absolute inset-0 z-[1] grid place-items-center p-3 text-center font-heading text-lg leading-display text-white capitalize max-lg:text-base max-sm:text-[15px]">Feasible events</span>
-          </button>
-          <button type="button" class="relative h-[160px] overflow-hidden max-sm:h-[120px] rounded-[10px] border-2 border-transparent shadow-card transition-transform duration-200 after:absolute after:inset-0 after:bg-[rgba(44,44,44,0.4)] even:translate-y-[30px] hover:scale-[1.03] hover:border-ink max-lg:even:translate-y-0" data-story="Corporate events" aria-haspopup="dialog">
-            <img class="size-full object-cover" src="/assets/83d5f.png" alt="" />
-            <span class="absolute inset-0 z-[1] grid place-items-center p-3 text-center font-heading text-lg leading-display text-white capitalize max-lg:text-base max-sm:text-[15px]">Corporate events</span>
-          </button>
-        </div>
+        <div class="reel w-full min-w-0" data-life-reel role="group" aria-label="Photos from life at Indesore"></div>
       </section>
 
       <!-- Scale and performance -->
@@ -425,19 +408,6 @@
       <a class="flex size-10 min-[1440px]:size-12 items-center justify-center rounded-full border border-[#ededed] bg-white text-[#363636] shadow-[0_2px_8px_rgba(108,108,108,0.15)] transition hover:-translate-y-0.5 hover:bg-ink hover:text-white" href="https://www.instagram.com/indesore.official/" aria-label="Instagram" target="_blank" rel="noopener noreferrer"><svg class="size-6" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="currentColor" stroke-width="2.4" /><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="2.4" /><circle cx="17.3" cy="6.7" r="1.3" fill="currentColor" /></svg></a>
       <a class="flex size-10 min-[1440px]:size-12 items-center justify-center rounded-full border border-[#ededed] bg-white text-[#363636] shadow-[0_2px_8px_rgba(108,108,108,0.15)] transition hover:-translate-y-0.5 hover:bg-ink hover:text-white" href="mailto:info@indesore.com" aria-label="Email us"><svg class="size-6" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M2 5h20v2.2l-10 6.3L2 7.2V5Zm0 4.6 10 6.3 10-6.3V19H2V9.6Z" /></svg></a>
     </nav>
-
-    <!-- Events modal (content rendered by src/main.js) -->
-    <div id="events-modal" class="fixed inset-0 z-[60] grid place-items-center bg-[rgba(40,40,40,0.48)] p-5 max-sm:p-3 backdrop-blur-[8px]" hidden>
-      <section class="flex max-h-[calc(100dvh-24px)] w-[min(1000px,100%)] flex-col overflow-hidden rounded-[10px] bg-white shadow-modal" role="dialog" aria-modal="true" aria-labelledby="events-title">
-        <div class="flex h-[100px] flex-none items-center justify-between gap-4 bg-ink-bar px-[clamp(20px,5vw,52px)] font-heading text-base max-sm:h-16 max-sm:text-sm text-white uppercase">
-          <span id="events-title" class="min-w-0"></span>
-          <button type="button" class="grid size-9 flex-none place-items-center rounded bg-soft" data-close-events aria-label="Close events">
-            <img class="size-5" src="/assets/76ed9.svg" alt="" />
-          </button>
-        </div>
-        <div id="events-body" class="overflow-y-auto"></div>
-      </section>
-    </div>
 
     <!-- Contact modal -->
     <div id="contact-modal" class="fixed inset-0 z-50 grid place-items-center bg-[rgba(40,40,40,0.48)] p-5 backdrop-blur-[8px]" hidden>
