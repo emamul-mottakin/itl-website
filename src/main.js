@@ -1,6 +1,9 @@
 import './index.css'
 import { departmentDetails } from './data/departments.js'
 import { eventCategories } from './data/events.js'
+import { initMarquee } from './marquee.js'
+import { brands } from './data/brands.js'
+import { certificates } from './data/certificates.js'
 
 const A = `${import.meta.env.BASE_URL}assets`
 const IMPACT_ICONS = ['84ecf.svg', '1c7db.svg', 'bf0b0.svg', 'dd56e.svg']
@@ -73,10 +76,14 @@ contactForm.addEventListener('submit', (event) => {
 /* ---------------------------------------------------------------------------
  * Newsletter
  * ------------------------------------------------------------------------- */
+// TODO: send the address to the newsletter backend once it exists; for now this only confirms in the UI.
 const newsletterForm = $('#newsletter-form')
+const newsletterStatus = $('#newsletter-status')
 newsletterForm.addEventListener('submit', (event) => {
   event.preventDefault()
   newsletterForm.reset()
+  newsletterStatus.textContent = 'Thanks, you are subscribed.'
+  setTimeout(() => (newsletterStatus.textContent = ''), 5000)
 })
 
 /* ---------------------------------------------------------------------------
@@ -297,7 +304,7 @@ function showEventList() {
           <span class="block aspect-square overflow-hidden rounded-[10px] bg-chip"><img class="size-full object-cover transition-transform duration-400 group-hover:scale-[1.04]" src="${A}/${item.photos[0]}" alt="" /></span>
           <span class="flex flex-col gap-0.5">
             <strong class="font-heading text-base leading-[1.4] capitalize max-sm:text-sm">${escapeHtml(item.title)}</strong>
-            <time class="font-heading text-xs text-[#c2c2c2]">${escapeHtml(item.date)}</time>
+            <time class="font-heading text-xs text-faint">${escapeHtml(item.date)}</time>
           </span>
         </button>`,
     )
@@ -368,7 +375,7 @@ function showEventDetail(index) {
           ${slider}
         </div>
         <div class="flex flex-col gap-3">
-          <time class="font-heading text-xs tracking-[2px] text-[#c2c2c2] uppercase">${escapeHtml(item.date)}</time>
+          <time class="font-heading text-xs tracking-[2px] text-faint uppercase">${escapeHtml(item.date)}</time>
           <h2 class="font-heading text-[26px] leading-[1.3] capitalize max-sm:text-[22px]">${escapeHtml(item.title)}</h2>
           <p class="text-base leading-[1.7] text-muted max-sm:text-[15px]">${escapeHtml(item.details ?? item.summary)}</p>
           ${steps}
@@ -416,3 +423,6 @@ $$('[data-story]').forEach((button) =>
     eventsModal.open($('[data-close-events]'))
   }),
 )
+
+initMarquee($('[data-brands]'), brands, `${A}/brands`)
+initMarquee($('[data-certificates]'), certificates, `${A}/certificates`)
