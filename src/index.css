@@ -23,7 +23,6 @@
 
   --color-ink: #4f4f4f;
   --color-ink-deep: #2f2f2f;
-  --color-ink-bar: #363636;
   --color-muted: #6b6b6b;
   --color-faint: #6f6f6f;
   --color-ghost: #c5c5c5;
@@ -32,7 +31,6 @@
   --color-soft: #f4f4f4;
   --color-pill: #f5f5f5;
   --color-mist: #f8f8f8;
-  --color-accent: #ef6c3f;
 
   --tracking-eyebrow: 4.08px;
   --leading-body: 1.469;
@@ -42,14 +40,18 @@
   --shadow-ring: 0 0 7.5px rgba(108, 108, 108, 0.25);
   --shadow-nav: 1px 2px 9px rgba(108, 108, 108, 0.15);
   --shadow-hero: 0 4px 25px rgba(44, 44, 44, 0.15);
-  --shadow-modal: 0 25px 70px rgba(0, 0, 0, 0.25);
 
   --breakpoint-xs: 35rem; /* 560px */
   --breakpoint-sm: 43.75rem; /* 700px */
   --breakpoint-md: 51.25rem; /* 820px */
   --breakpoint-lg: 56.25rem; /* 900px */
 
-  --animate-panel-in: panel-in 280ms ease both;
+  --ease-snap: cubic-bezier(0.23, 1, 0.32, 1);
+
+  /* Every Tailwind `transition` / `transition-*` on the site (hover lifts, tab colours, arrows) uses the strong ease-out. */
+  --default-transition-timing-function: cubic-bezier(0.23, 1, 0.32, 1);
+
+  --animate-panel-in: panel-in 220ms var(--ease-snap) both;
 
   @keyframes panel-in {
     from {
@@ -72,14 +74,19 @@
   }
 }
 
-/* Brand strip: two marquee rows (row 1 moves left, row 2 moves right) sitting inside the section.
-   Hovering or focusing a brand pauses both rows. */
+/* Two scrolling rows (row 1 moves left, row 2 moves right): the brand/certificate strips (.brand-rows)
+   and the Life at Indesore film reel (.reel). Hovering or focusing an item pauses both rows. */
+.brand-rows,
+.reel {
+  --fade: 14%;
+  display: grid;
+  mask-image: linear-gradient(90deg, transparent, #000 var(--fade), #000 calc(100% - var(--fade)), transparent);
+}
+
 .brand-rows {
   --tile-w: clamp(104px, 11vw, 140px);
   --tile-gap: clamp(12px, 1.5vw, 20px);
-  display: grid;
   gap: calc(var(--tile-gap) * 1.2);
-  mask-image: linear-gradient(90deg, transparent, #000 14%, #000 86%, transparent);
 }
 
 .brand-row {
@@ -135,13 +142,7 @@
   clip-path: inset(2.5%);
 }
 
-@media (hover: hover) {
-  .brand:hover {
-    transform: translateY(-2px);
-  }
-}
-.brand-rows:has(.brand:hover) .brand-track,
-.brand-rows:has(.brand:focus-visible) .brand-track {
+:is(.brand-rows, .reel):has(:is(.brand, .reel-photo):is(:hover, :focus-visible)) .brand-track {
   animation-play-state: paused;
 }
 
@@ -160,110 +161,23 @@
   }
 }
 
-.brand-tip {
-  position: fixed;
-  z-index: 50;
-  max-width: 260px;
-  padding: 14px 16px;
-  border: 1px solid var(--color-line);
-  border-radius: 12px;
-  background: #fff;
-  box-shadow: var(--shadow-card);
-  font-size: 14px;
-  line-height: 1.4;
-  color: var(--color-ink);
-  pointer-events: none;
-
-  &[hidden] {
-    display: none;
-  }
-}
-
-@keyframes brand-tip-in {
-  from {
-    opacity: 0;
-    transform: translateY(4px);
-  }
-}
-
-.brand-tip-title {
-  display: block;
-  font-family: var(--font-heading);
-  font-size: 16px;
-}
-
-.brand-tip-label {
-  margin: 8px 0 4px;
-  font-size: 12px;
-  color: var(--color-muted);
-}
-
-.brand-tip ul {
-  display: grid;
-  gap: 2px;
-}
-
-.brand-tip li::before {
-  content: '•';
-  margin-right: 8px;
-  color: var(--color-ghost);
-}
-
-/* Without animation the rows would be clipped, so lay the brands out as a wrapped list instead. */
-@media (prefers-reduced-motion: reduce) {
-  .brand-rows {
-    mask-image: none;
-  }
-
-  .brand-track,
-  .brand-list {
-    flex-wrap: wrap;
-    justify-content: center;
-    width: auto;
-  }
-
-  .brand-list[aria-hidden='true'] {
-    display: none;
-  }
-}
-
-/* Life at Indesore: two film-strip rows (row 1 moves left, row 2 moves right) with faded edges.
-   Hovering or focusing a photo pauses both rows and scales that photo up. */
+/* Film reel: dark grey strip with a row of sprocket holes above and below each photo. */
 .reel {
+  --fade: 18%;
   --frame-w: 190px; /* a multiple of --hole so the sprocket holes loop seamlessly */
   --hole: 19px;
   --film: #323232;
-  display: grid;
   gap: 6px;
-  mask-image: linear-gradient(90deg, transparent, #000 18%, #000 82%, transparent);
 
   @media (max-width: 699.98px) {
     --frame-w: 152px;
   }
-}
 
-.reel-row {
-  overflow: hidden;
-  padding-block: 8px; /* room for the hover scale so it is not clipped */
-}
-
-.reel-track {
-  display: flex;
-  width: max-content;
-  animation: brand-left 38s linear infinite;
-
-  &[data-direction='right'] {
-    animation-name: brand-right;
-    animation-duration: 34s;
+  & .brand-row {
+    padding-block: 8px; /* room for the hover scale */
   }
 }
 
-.reel-list {
-  display: flex;
-  flex: none;
-}
-
-/* One frame of film: dark grey strip with a row of sprocket holes above and below the photo. */
 .reel-frame {
   --sprocket: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='19' height='10'%3E%3Crect x='4' width='11' height='10' rx='2' fill='%23fff'/%3E%3C/svg%3E");
   flex: none;
@@ -294,6 +208,8 @@
   &:focus-visible {
     outline: 2px solid #fff;
     outline-offset: 2px;
+    z-index: 1;
+    transform: scale(1.1);
   }
 }
 
@@ -303,57 +219,158 @@
     transform: scale(1.1);
     box-shadow: 0 10px 24px rgba(0, 0, 0, 0.45);
   }
-}
-.reel-photo:focus-visible {
-  z-index: 1;
-  transform: scale(1.1);
+
+  .brand:hover {
+    transform: translateY(-2px);
+  }
 }
 
-.reel:has(.reel-photo:hover) .reel-track,
-.reel:has(.reel-photo:focus-visible) .reel-track {
-  animation-play-state: paused;
-}
-
+/* Tooltips for both strips (positioned by src/strip.js). */
+.brand-tip,
 .reel-tip {
   position: fixed;
   z-index: 50;
-  max-width: 240px;
-  padding: 12px 14px;
   border: 1px solid var(--color-line);
   border-radius: 12px;
   background: #fff;
   box-shadow: var(--shadow-card);
-  font-size: 13px;
-  line-height: 1.45;
-  color: var(--color-muted);
   pointer-events: none;
-  animation: brand-tip-in 200ms cubic-bezier(0.23, 1, 0.32, 1);
 
   &[hidden] {
     display: none;
   }
 }
 
+.brand-tip {
+  max-width: 260px;
+  padding: 14px 16px;
+  animation: tip-in 160ms var(--ease-snap);
+  font-size: 14px;
+  line-height: 1.4;
+  color: var(--color-ink);
+
+  & ul {
+    display: grid;
+    gap: 2px;
+  }
+
+  & li::before {
+    content: '•';
+    margin-right: 8px;
+    color: var(--color-ghost);
+  }
+}
+
+.reel-tip {
+  max-width: 240px;
+  padding: 12px 14px;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--color-muted);
+  animation: tip-in 160ms var(--ease-snap);
+}
+
+@keyframes tip-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+}
+
+.brand-tip-title,
 .reel-tip-title {
   display: block;
-  margin-bottom: 2px;
   font-family: var(--font-heading);
+  font-size: 16px;
+}
+
+.brand-tip-label {
+  margin: 8px 0 4px;
+  font-size: 12px;
+  color: var(--color-muted);
+}
+
+.reel-tip-title {
+  margin-bottom: 2px;
   font-size: 15px;
   color: var(--color-ink);
 }
 
-/* Without animation, let each row scroll sideways instead of clipping the photos. */
+/* Without animation the rows would be clipped, so lay the items out as a wrapped list instead. */
 @media (prefers-reduced-motion: reduce) {
+  .brand-rows,
   .reel {
     mask-image: none;
   }
 
-  .reel-row {
-    overflow-x: auto;
+  .brand-track,
+  .brand-list {
+    flex-wrap: wrap;
+    justify-content: center;
+    width: auto;
   }
 
-  .reel-list[aria-hidden='true'] {
+  .brand-list[aria-hidden='true'] {
     display: none;
+  }
+}
+
+/* Motion: hero entrance, scroll reveal (src/motion.js) and the contact dialog opening.
+   All ease-out and under 1s. */
+@keyframes reveal-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+}
+
+@keyframes scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+.reveal:not(.in) {
+  opacity: 0;
+}
+
+.reveal.in {
+  animation: reveal-in 500ms var(--ease-snap) var(--d, 0ms) backwards;
+}
+
+.hero-in > * {
+  animation: reveal-in 700ms var(--ease-snap) backwards;
+
+  &:nth-child(2) {
+    animation-delay: 70ms;
+  }
+  &:nth-child(3) {
+    animation-delay: 140ms;
+  }
+  &:nth-child(4) {
+    animation-delay: 210ms;
+  }
+  &:nth-child(5) {
+    animation-delay: 280ms;
+  }
+}
+
+.hero-art {
+  animation: scale-in 900ms var(--ease-snap) 200ms backwards;
+}
+
+#contact-modal:not([hidden]) {
+  animation: fade-in 200ms var(--ease-snap) backwards;
+
+  & > section {
+    animation: scale-in 260ms var(--ease-snap) backwards;
   }
 }
 
@@ -377,6 +394,11 @@
 
   button:not(:disabled) {
     cursor: pointer;
+    transition: scale 160ms var(--ease-snap);
+
+    &:active {
+      scale: 0.97; /* press feedback */
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {

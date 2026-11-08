@@ -26,7 +26,8 @@ Live site: https://emamul-mottakin.github.io/itl-website/
 ## Structure
 
 - `index.html` – page markup
-- `src/main.js` – interactivity (renders department and event details)
-- `src/data/` – department and event content
+- `src/main.js` – page interactivity (department tabs and panel, contact form, newsletter)
+- `src/strip.js` – the scrolling brand/certificate strips and the Life at Indesore photo reel
+- `src/data/` – department, brand, certificate and life-photo content
 - `src/index.css` – Tailwind import and theme
 - `public/` – images and icons

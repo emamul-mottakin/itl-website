@@ -1,55 +1,16 @@
 import './index.css'
 import { departmentDetails } from './data/departments.js'
-import { initMarquee } from './marquee.js'
-import { initReel } from './reel.js'
-import { lifeRows, lifeSocialUrl } from './data/life.js'
 import { brands } from './data/brands.js'
 import { certificates } from './data/certificates.js'
+import { lifeRows, lifeSocialUrl } from './data/life.js'
+import { escapeHtml, initMarquee, initReel } from './strip.js'
+import { initMotion } from './motion.js'
 
 const A = `${import.meta.env.BASE_URL}assets`
 const IMPACT_ICONS = ['84ecf.svg', '1c7db.svg', 'bf0b0.svg', 'dd56e.svg']
 
 const $ = (selector, root = document) => root.querySelector(selector)
 const $$ = (selector, root = document) => [...root.querySelectorAll(selector)]
-
-const escapeHtml = (value = '') =>
-  String(value).replace(/[&<>"']/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char])
-
-/* ---------------------------------------------------------------------------
- * Modal helper: open/close a [hidden] backdrop, close on backdrop click and
- * Escape, and return focus to whatever opened it.
- * ------------------------------------------------------------------------- */
-function createModal(backdrop, { onEscape, onClose } = {}) {
-  let returnFocus = null
-
-  const close = () => {
-    if (backdrop.hidden) return
-    backdrop.hidden = true
-    document.removeEventListener('keydown', handleKey)
-    onClose?.()
-    returnFocus?.focus()
-  }
-
-  const handleKey = (event) => {
-    if (event.key !== 'Escape') return
-    // onEscape can return true to swallow Escape (e.g. step back a view first).
-    if (onEscape?.()) return
-    close()
-  }
-
-  const open = (focusTarget) => {
-    returnFocus = document.activeElement
-    backdrop.hidden = false
-    document.addEventListener('keydown', handleKey)
-    focusTarget?.focus()
-  }
-
-  backdrop.addEventListener('mousedown', (event) => {
-    if (event.target === backdrop) close()
-  })
-
-  return { open, close }
-}
 
 /* ---------------------------------------------------------------------------
  * Navigation
@@ -61,16 +22,28 @@ $('[data-scroll-top]').addEventListener('click', () => window.scrollTo({ top: 0,
  * ------------------------------------------------------------------------- */
 const contactBackdrop = $('#contact-modal')
 const contactForm = $('#contact-form')
-const contactModal = createModal(contactBackdrop)
+let returnFocus
+
+const closeContact = () => {
+  if (contactBackdrop.hidden) return
+  contactBackdrop.hidden = true
+  returnFocus?.focus()
+}
 
 $$('[data-open-contact]').forEach((button) =>
-  button.addEventListener('click', () => contactModal.open($('input[name="name"]', contactForm))),
+  button.addEventListener('click', () => {
+    returnFocus = document.activeElement
+    contactBackdrop.hidden = false
+    $('input[name="name"]', contactForm).focus()
+  }),
 )
-$$('[data-close-contact]').forEach((button) => button.addEventListener('click', contactModal.close))
+$$('[data-close-contact]').forEach((button) => button.addEventListener('click', closeContact))
+contactBackdrop.addEventListener('mousedown', (event) => event.target === contactBackdrop && closeContact())
+document.addEventListener('keydown', (event) => event.key === 'Escape' && closeContact())
 contactForm.addEventListener('submit', (event) => {
   event.preventDefault()
   contactForm.reset()
-  contactModal.close()
+  closeContact()
 })
 
 /* ---------------------------------------------------------------------------
@@ -90,6 +63,29 @@ newsletterForm.addEventListener('submit', (event) => {
  * Departments: vertical tab list + details panel
  * ------------------------------------------------------------------------- */
 const deptTabList = $('#dept-tabs')
+const TAB = 'group flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm leading-[1.35] text-[#6b6b6b] transition-colors hover:not-aria-selected:bg-[#eaeaea] hover:not-aria-selected:text-ink aria-selected:bg-ink aria-selected:font-heading aria-selected:text-white aria-selected:shadow-[0_6px_16px_rgba(44,44,44,0.18)] max-lg:w-auto max-lg:flex-none max-lg:rounded-[30px] max-lg:px-3.5 max-lg:py-[13px] max-lg:whitespace-nowrap max-sm:text-[13px]'
+const TAB_NUMBER = 'w-5 flex-none text-xs text-faint tabular-nums transition-colors group-aria-selected:text-white/55 max-lg:hidden'
+const TAB_ARROW = `<svg class="size-4 flex-none -translate-x-1 opacity-0 transition group-hover:translate-x-0 group-hover:opacity-50 group-aria-selected:translate-x-0 group-aria-selected:opacity-100! max-lg:hidden" viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="m9 6 6 6-6 6" /></svg>`
+const DOCK = 'flex-none rounded-[30px] px-3.5 py-3.5 text-[13px] leading-[1.35] whitespace-nowrap text-[#6b6b6b] transition-colors aria-[current=true]:bg-ink aria-[current=true]:font-heading aria-[current=true]:text-white aria-[current=true]:shadow-[0_6px_16px_rgba(44,44,44,0.18)]'
+
+// Desktop tab list and mobile dock, both built from the department data.
+deptTabList.insertAdjacentHTML(
+  'beforeend',
+  departmentDetails
+    .map(
+      ({ name }, i) => `
+        <button type="button" id="dept-tab-${i}" role="tab" aria-selected="false" aria-controls="dept-panel" tabindex="-1" data-department="${escapeHtml(name)}" class="${TAB}">
+          <span class="${TAB_NUMBER}">${String(i + 1).padStart(2, '0')}</span>
+          <span class="min-w-0 flex-1">${escapeHtml(name)}</span>
+          ${TAB_ARROW}
+        </button>`,
+    )
+    .join(''),
+)
+$('#dept-dock').innerHTML = departmentDetails
+  .map(({ name }, i) => `<button type="button" class="${DOCK}" data-dock="${i}" aria-current="false">${escapeHtml(name)}</button>`)
+  .join('')
+
 const deptTabs = $$('[role="tab"]', deptTabList)
 const deptSlot = $('#dept-panel-slot')
 
@@ -111,8 +107,13 @@ function neighbour(target, label) {
     </button>`
 }
 
+// Each department has its own photo, named after it: "Quality Assurance (QA)" -> quality-assurance-qa.webp
+const deptImage = ({ name }) => `${A}/departments/${name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')}.webp`
+// Warm the cache once the page has loaded so switching departments never waits on an image.
+addEventListener('load', () => departmentDetails.forEach((dept) => (new Image().src = deptImage(dept))))
+
 function renderDepartmentPanel(index) {
-  const dept = departmentDetails.find((item) => item.name === deptTabs[index].dataset.department) ?? departmentDetails[0]
+  const dept = departmentDetails[index]
 
   const impact = dept.impact
     .map(
@@ -155,7 +156,7 @@ function renderDepartmentPanel(index) {
         </div>
         <div class="rounded-2xl bg-white p-2 shadow-ring max-sm:-order-1">
           <div class="relative aspect-[4/5] overflow-hidden rounded-[10px] max-sm:aspect-video">
-            <img class="absolute inset-0 size-full object-cover" src="${A}/12850.webp" alt="" />
+            <img class="absolute inset-0 size-full object-cover" src="${deptImage(dept)}" alt="" />
           </div>
         </div>
       </div>
@@ -173,7 +174,6 @@ function renderDepartmentPanel(index) {
 
 const dock = $('#dept-dock')
 const dockChips = $$('[data-dock]', dock)
-const dockList = dock
 const deptStatus = $('#dept-status')
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)')
 const tabletOnly = window.matchMedia('(min-width: 700px) and (max-width: 899.98px)')
@@ -217,7 +217,7 @@ function selectDepartment(index, { focus = false, focusPanel = false, reveal = t
 
   if (focus) deptTabs[index].focus()
   keepVisible(deptTabList, deptTabs[index])
-  keepVisible(dockList, dockChips[index])
+  keepVisible(dock, dockChips[index])
 
   renderDepartmentPanel(index)
   if (focusPanel) $('#dept-panel').focus({ preventScroll: true })
@@ -254,3 +254,5 @@ selectDepartment(0, { reveal: false })
 initMarquee($('[data-brands]'), brands, `${A}/brands`)
 initMarquee($('[data-certificates]'), certificates, `${A}/certificates`)
 initReel($('[data-life-reel]'), lifeRows, `${A}/life-at-indesore`, lifeSocialUrl)
+
+initMotion()
