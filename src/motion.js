@@ -23,9 +23,9 @@ export function initMotion() {
   const single = (selector) => $$(selector).forEach((el) => items.push([el, 0]))
   const group = (parents) => parents.forEach((parent) => [...parent.children].forEach((el, i) => items.push([el, Math.min(i, 5) * 70])))
 
-  single('main > section > header, main > section > div > header, #why-indesore .wrap > div:first-child, #brands-label, .brand-rows, #departments > div')
+  single('main > section > header, main > section > div > header, #why-indesore .wrap > div:first-child, #brands-label, .brand-rows, .reel, #departments > div')
   group([
-    ...$$('[aria-label="Company statistics"], main ol, main section:has(.reel), main > section:last-of-type, footer > div:first-child'),
+    ...$$('[aria-label="Company statistics"], main ol, main > section:last-of-type, footer > div:first-child'),
     ...new Set($$('main article:not(#dept-panel)').map((card) => card.parentElement)),
   ])
 

@@ -2,7 +2,7 @@ import './index.css'
 import { departmentDetails } from './data/departments.js'
 import { brands } from './data/brands.js'
 import { certificates } from './data/certificates.js'
-import { lifeRows, lifeSocialUrl } from './data/life.js'
+import { lifePhotos, lifeSocialUrl } from './data/life.js'
 import { escapeHtml, initMarquee, initReel } from './strip.js'
 import { initMotion } from './motion.js'
 
@@ -252,7 +252,7 @@ deptTabList.addEventListener('keydown', (event) => {
 selectDepartment(0, { reveal: false })
 
 initMarquee($('[data-brands]'), brands, `${A}/brands`)
-initMarquee($('[data-certificates]'), certificates, `${A}/certificates`)
-initReel($('[data-life-reel]'), lifeRows, `${A}/life-at-indesore`, lifeSocialUrl)
+initMarquee($('[data-certificates]'), certificates, `${A}/certificates`, 1)
+initReel($('[data-life-reel]'), lifePhotos, `${A}/life-at-indesore`, lifeSocialUrl)
 
 initMotion()

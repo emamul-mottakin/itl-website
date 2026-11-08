@@ -74,7 +74,7 @@
   }
 }
 
-/* Two scrolling rows (row 1 moves left, row 2 moves right): the brand/certificate strips (.brand-rows)
+/* Scrolling rows (the brand/certificate strips (.brand-rows) have two, moving in opposite directions)
    and the Life at Indesore film reel (.reel). Hovering or focusing an item pauses both rows. */
 .brand-rows,
 .reel {
@@ -163,7 +163,7 @@
 
 /* Film reel: dark grey strip with a row of sprocket holes above and below each photo. */
 .reel {
-  --fade: 18%;
+  --fade: 7%;
   --frame-w: 190px; /* a multiple of --hole so the sprocket holes loop seamlessly */
   --hole: 19px;
   --film: #323232;

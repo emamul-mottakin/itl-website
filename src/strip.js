@@ -6,8 +6,8 @@ export const escapeHtml = (value = '') =>
 const list = (items, render, duplicate) =>
   `<ul class="brand-list"${duplicate ? ' aria-hidden="true"' : ''}>${items.map((item) => render(item, duplicate)).join('')}</ul>`
 
-// Two scrolling rows: `rows` is [{ items, direction: 'left' | 'right', duration }]. Hovering or
-// focusing an item pauses both rows (see `.brand-rows` / `.reel` in index.css).
+// Scrolling rows: `rows` is [{ items, direction: 'left' | 'right', duration }]. Hovering or
+// focusing an item pauses every row (see `.brand-rows` / `.reel` in index.css).
 function renderRows(container, rows, render) {
   container.innerHTML = rows
     .map(
@@ -54,22 +54,25 @@ function addTooltip(container, selector, className, html, { gap, rectOf = (item)
 }
 
 /**
- * Two-row logo marquee: row 1 scrolls right-to-left, row 2 left-to-right. Items are
- * `{ name, logo, lines? }`; when any item has `lines`, hovering it shows a tooltip listing them.
+ * Logo marquee: the logos are split evenly over `rows` rows (default 2) that scroll in opposite
+ * directions, the first right-to-left. Items are `{ name, logo, lines? }`; when any item has
+ * `lines`, hovering it shows a tooltip listing them.
  *
  * @param container element that receives the rows (`.brand-rows` in index.css)
  * @param items     logos in display order
  * @param folder    URL of the folder holding the logo files
+ * @param rows      number of rows
  */
-export function initMarquee(container, items, folder) {
+export function initMarquee(container, items, folder, rows = 2) {
   if (!container) return
-  const split = Math.ceil(items.length / 2)
+  const size = Math.ceil(items.length / rows)
   renderRows(
     container,
-    [
-      { items: items.slice(0, split), direction: 'left', duration: 60 },
-      { items: items.slice(split), direction: 'right', duration: 55 },
-    ],
+    Array.from({ length: rows }, (_, i) => ({
+      items: items.slice(i * size, (i + 1) * size),
+      direction: i % 2 ? 'right' : 'left',
+      duration: size * 5, // about 5s per logo keeps the speed the same however many logos a row holds
+    })),
     ({ name, logo }, duplicate) =>
       `<li class="brand" data-name="${escapeHtml(name)}"${duplicate ? '' : ' tabindex="0"'}><img src="${folder}/${logo}" alt="${duplicate ? '' : escapeHtml(name)}" draggable="false" /></li>`,
   )
@@ -94,19 +97,19 @@ export function initMarquee(container, items, folder) {
 }
 
 /**
- * Two-row film-strip photo reel (row 1 right-to-left, row 2 left-to-right). Hovering a photo
- * pauses both rows, scales it up and shows a tooltip inviting visitors to see all photos on
- * social media; each photo links there.
+ * Single-row film-strip photo reel scrolling right-to-left. Hovering a photo pauses the reel,
+ * scales the photo up and shows a tooltip inviting visitors to see all photos on social media;
+ * each photo links there.
  *
- * @param rows   array of rows, each an array of `{ src, alt }`
+ * @param photos array of `{ src, alt }`
  * @param folder URL of the folder holding the photos
  * @param href   social media page the photos link to
  */
-export function initReel(container, rows, folder, href) {
+export function initReel(container, photos, folder, href) {
   if (!container) return
   renderRows(
     container,
-    rows.map((items, i) => ({ items, direction: i % 2 ? 'right' : 'left', duration: i % 2 ? 34 : 38 })),
+    [{ items: photos, direction: 'left', duration: 70 }],
     ({ src, alt }, duplicate) => `
       <li class="reel-frame">
         <a class="reel-photo" href="${href}" target="_blank" rel="noopener noreferrer"${duplicate ? ' tabindex="-1"' : ''}>
