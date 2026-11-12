@@ -345,6 +345,69 @@
   animation: reveal-in 500ms var(--ease-snap) var(--d, 0ms) backwards;
 }
 
+/* Loading screen (src/loader.js) */
+.loader {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  background: rgba(255, 255, 255, 0.72);
+  -webkit-backdrop-filter: blur(24px);
+  backdrop-filter: blur(24px);
+  transition: transform 800ms cubic-bezier(0.76, 0, 0.24, 1);
+  will-change: transform;
+}
+
+.loader.is-leaving {
+  transform: translateY(-100%);
+}
+
+.loader-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 22px;
+  animation: fade-in 500ms var(--ease-snap) backwards;
+}
+
+.loader-logo {
+  width: min(320px, 70vw);
+  height: auto;
+}
+
+.loader-bar {
+  width: min(140px, 40vw);
+  height: 6px;
+  overflow: hidden;
+  border-radius: 99px;
+  background: #ececec;
+
+  & > span {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, #4a4a4a, #2c2c2c);
+    transform: scaleX(0);
+    transform-origin: left;
+  }
+}
+
+html.loading {
+  overflow: hidden;
+}
+
+html.loading .hero-in > *,
+html.loading .hero-art {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .loader {
+    display: none;
+  }
+}
+
 .hero-in > * {
   animation: reveal-in 700ms var(--ease-snap) backwards;
 

@@ -6,6 +6,7 @@ import { certificates } from './data/certificates.js'
 import { lifePhotos, lifeSocialUrl } from './data/life.js'
 import { escapeHtml, initMarquee, initReel } from './strip.js'
 import { initMotion } from './motion.js'
+import { runLoader } from './loader.js'
 
 const A = `${import.meta.env.BASE_URL}assets`
 const IMPACT_ICONS = ['84ecf.svg', '1c7db.svg', 'bf0b0.svg', 'dd56e.svg']
@@ -271,4 +272,8 @@ initMarquee($('[data-brands]'), brands, `${A}/brands`)
 initMarquee($('[data-certificates]'), certificates, `${A}/certificates`, 1)
 initReel($('[data-life-reel]'), lifePhotos, `${A}/life-at-indesore`, lifeSocialUrl)
 
-initMotion()
+lenis?.stop()
+runLoader().then(() => {
+  lenis?.start()
+  initMotion()
+})

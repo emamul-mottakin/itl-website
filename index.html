@@ -7,8 +7,19 @@
     <meta name="description" content="Explore department expertise and open tailored details for each function to quickly understand its capabilities and business value." />
     <meta name="robots" content="noindex, nofollow" />
     <link rel="icon" href="/favicon.svg" />
+    <link rel="preload" as="image" href="/assets/indesore-logo.png" />
+    <script>
+      // Hold the page entrance animations until the loader has left (src/loader.js).
+      if (!matchMedia('(prefers-reduced-motion: reduce)').matches) document.documentElement.classList.add('loading')
+    </script>
   </head>
   <body>
+    <div id="loader" class="loader" role="status" aria-label="Loading">
+      <div class="loader-inner">
+        <img class="loader-logo" src="/assets/indesore-logo.png" alt="Indesore — we build the trust" width="600" height="224" />
+        <div class="loader-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div>
+      </div>
+    </div>
     <main id="root">
       <!-- Navigation -->
       <nav class="wrap sticky top-4 z-10 mt-[30px] flex h-[70px] items-center justify-center rounded-[81px] border border-[#ededed] bg-white/70 shadow-nav backdrop-blur-[4.5px] max-sm:mt-4 max-sm:h-[58px]" aria-label="Main navigation">
