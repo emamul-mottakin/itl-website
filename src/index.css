@@ -375,8 +375,16 @@
 }
 
 @layer base {
-  html {
-    scroll-behavior: smooth;
+  /* Lenis handles smooth scrolling (src/main.js). */
+  html.lenis,
+  html.lenis body {
+    height: auto;
+  }
+  .lenis.lenis-smooth {
+    scroll-behavior: auto !important;
+  }
+  .lenis.lenis-stopped {
+    overflow: hidden;
   }
 
   body {

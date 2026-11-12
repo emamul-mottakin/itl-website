@@ -1,3 +1,4 @@
+import Lenis from 'lenis'
 import './index.css'
 import { departmentDetails } from './data/departments.js'
 import { brands } from './data/brands.js'
@@ -15,7 +16,19 @@ const $$ = (selector, root = document) => [...root.querySelectorAll(selector)]
 /* ---------------------------------------------------------------------------
  * Navigation
  * ------------------------------------------------------------------------- */
-$('[data-scroll-top]').addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }))
+// Smooth, inertial mouse-wheel scrolling (skipped for users who prefer reduced motion).
+const lenis = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? null : new Lenis({ lerp: 0.1, wheelMultiplier: 1 })
+if (lenis) {
+  const raf = (time) => {
+    lenis.raf(time)
+    requestAnimationFrame(raf)
+  }
+  requestAnimationFrame(raf)
+}
+
+$('[data-scroll-top]').addEventListener('click', () =>
+  lenis ? lenis.scrollTo(0) : window.scrollTo({ top: 0, behavior: 'smooth' }),
+)
 
 /* ---------------------------------------------------------------------------
  * Contact modal
@@ -200,7 +213,10 @@ function revealPanel() {
   let offset = nav.getBoundingClientRect().bottom + 12
   if (tabletOnly.matches) offset += deptTabList.offsetHeight + 12
   const delta = panel.getBoundingClientRect().top - offset
-  if (delta < -2) window.scrollBy({ top: delta, behavior: reduceMotion.matches ? 'auto' : 'smooth' })
+  if (delta < -2) {
+    if (lenis) lenis.scrollTo(window.scrollY + delta)
+    else window.scrollBy({ top: delta, behavior: 'auto' })
+  }
 }
 
 let currentDepartment = 0
