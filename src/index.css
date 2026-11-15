@@ -161,12 +161,12 @@
   }
 }
 
-/* Film reel: dark grey strip with a row of sprocket holes above and below each photo. */
+/* Film reel: light grey strip with a row of sprocket holes above and below each photo. */
 .reel {
   --fade: 7%;
   --frame-w: 190px; /* a multiple of --hole so the sprocket holes loop seamlessly */
   --hole: 19px;
-  --film: #323232;
+  --film: #e0e0e0;
   gap: 6px;
 
   @media (max-width: 699.98px) {

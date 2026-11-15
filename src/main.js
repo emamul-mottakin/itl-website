@@ -31,6 +31,16 @@ $('[data-scroll-top]').addEventListener('click', () =>
   lenis ? lenis.scrollTo(0) : window.scrollTo({ top: 0, behavior: 'smooth' }),
 )
 
+// In-page jump buttons (e.g. the hero's "Explore Indesore") glide to their target.
+document.querySelectorAll('[data-scroll-to]').forEach((button) =>
+  button.addEventListener('click', () => {
+    const target = document.querySelector(button.dataset.scrollTo)
+    if (!target) return
+    if (lenis) lenis.scrollTo(target, { offset: -80 })
+    else target.scrollIntoView({ behavior: 'auto' })
+  }),
+)
+
 /* ---------------------------------------------------------------------------
  * Contact modal
  * ------------------------------------------------------------------------- */
